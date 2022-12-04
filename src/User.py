@@ -22,7 +22,8 @@ class User:
             'tweets': self.tweets,
             'following': self.following
         })
-        
+    
+    @staticmethod
     def from_json(json_str):
         if not json_str:
             return None
