@@ -2,11 +2,13 @@ import json
 
 
 class Tweet:
-    def __init__(self, tweet_id, user_id, text, time):
-        self.tweet_id = tweet_id
+    def __init__(self, user_id, text, time):
         self.user_id = user_id
         self.text = text
         self.time = time
+        
+        #hash the tweet user_id + text + time
+        self.tweet_id = hash(str(user_id) + text + str(time))
         
     def __eq__(self, __o: object) -> bool:
         return self.tweet_id == __o.tweet_id
@@ -18,6 +20,7 @@ class Tweet:
             'text': self.text,
             'time': self.time
         })
+        
         
     @staticmethod
     def from_json(json_str):
