@@ -14,8 +14,8 @@ async def run(id):
     await node.listen(NODE_PORT + id)
     await node.bootstrap([("0.0.0.0", 8468)])
     
-    user = User(id, "0.0.0.0", NODE_PORT + id, "user" + str(id), [], [])
-    tweet = Tweet(id, "tweet" + str(id), 0)
+    user = User("user" + str(id), "0.0.0.0", NODE_PORT + id,  [], [])
+    tweet = Tweet(user.username, "tweet" + str(id), 0)
         
     # set a value for the key "my-key" on the network
     await node.set(user.username, user.to_json())
