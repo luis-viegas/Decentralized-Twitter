@@ -42,7 +42,7 @@ class Timeline:
          
         self.tweets.append(tweet)
         self.tweets.sort()
-        
+        return True
         
     def remove_tweet(self, tweet: Tweet):
         if(tweet not in self.tweets):

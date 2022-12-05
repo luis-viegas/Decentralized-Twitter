@@ -2,8 +2,13 @@ import Node
 import Origin
 import asyncio
 import threading
-import multiprocessing
+from multiprocessing import Process
 from time import sleep
+
+
+def run_node(node):
+    asyncio.run(node.run())
+
 
 if __name__ == '__main__':
 
@@ -12,6 +17,11 @@ if __name__ == '__main__':
 
     sleep(1)
 
-    for i in range(1,10):
-        sleep(0.5)
-        multiprocessing.Process(target=Node.start, args=(i,)).start()
+    node1 = Node.Node(1, "node1")
+    node2 = Node.Node(2, "node2")
+
+    p1 = Process(target=run_node, args=(node1,))
+    p2 = Process(target=run_node, args=(node2,))
+
+    p1.start()
+    p2.start()

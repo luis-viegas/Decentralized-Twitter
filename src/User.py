@@ -2,8 +2,7 @@ import json
 
 
 class User:
-    def __init__(self, user_id: int, ip: str , port: int , username: str, tweets: list, following: list):
-        self.user_id = user_id
+    def __init__(self, username: str,ip: str , port: int, tweets: list = [], following: list = []):
         self.ip = ip
         self.port = port
         self.username = username
@@ -15,10 +14,9 @@ class User:
     
     def to_json(self):
         return json.dumps({
-            'user_id': self.user_id,
+            'username': self.username,
             'ip': self.ip,
             'port': self.port,
-            'username': self.username,
             'tweets': self.tweets,
             'following': self.following
         })
@@ -28,7 +26,27 @@ class User:
         if not json_str:
             return None
         json_obj = json.loads(json_str)
-        return User(json_obj['user_id'], json_obj['ip'], json_obj['port'], json_obj['username'], json_obj['tweets'], json_obj['following'])
+        return User(json_obj['username'],json_obj['ip'], json_obj['port'],  json_obj['tweets'], json_obj['following'])
+    
+    
+    def subscribe(self, username: str):
+        if username in self.following:
+            return False
+        
+        self.following.append(username)
+        return True
+    
+    def unsubscribe(self, username: str):
+        if username not in self.following:
+            return False
+        
+        self.following.remove(username)
+        return True
+
+    def add_tweet(self, tweet_id: int):
+        self.tweets.append(tweet_id)
+    
+    
     
     
         
