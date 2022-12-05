@@ -3,7 +3,7 @@ import time
 
 class Tweet:
     def __init__(self, username, text, time):
-        self.user_id = username
+        self.username = username
         self.text = text
         # Time is taken in seconds to allow a sort of the list of tweets
         self.time = time
@@ -19,7 +19,7 @@ class Tweet:
     
     #One line with username and time of tweet and then the text of the tweet on the next line
     def __str__(self):
-        return self.user_id + ": " + time.ctime(self.time) + "\n" + self.text
+        return self.username + ": " + time.ctime(self.time) + "\n" + self.text
     
         
         
