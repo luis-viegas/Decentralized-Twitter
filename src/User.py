@@ -12,6 +12,9 @@ class User:
     def __eq__(self, __o: object) -> bool:
         return self.user_id == __o.user_id
     
+    def __str__(self) -> str:
+        return self.username
+    
     def to_json(self):
         return json.dumps({
             'username': self.username,

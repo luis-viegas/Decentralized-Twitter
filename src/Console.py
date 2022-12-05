@@ -1,15 +1,19 @@
+from __future__ import annotations
 import os
 from abc import ABC, abstractmethod
-from Node import Node
 from time import sleep
+import Node
 
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
+    
+
+# State Machine
 
 class Console:
     _state = None
     
-    def __init__(self, node, state = Home):
+    def __init__(self, node: Node.Node, state: State) ->None:
         self.node = node
         self.setState(state)
             
@@ -17,25 +21,28 @@ class Console:
     def setState(self, state):
         self._state = state
         self._state.console = self
-        self._state.node = self
-        self.handle_input()
+        self._state.node = self.node
         
     def currentState(self):
         return self._state
+
+    async def handle_state(self):
+        await self._state.handle_input(self._state)
     
     
-    def handle_input(self):
-        self._state.handle_input()
         
-        
-    # The common state interface for all the states
+            
+
+
+# States
+
 class State(ABC):
     @property
     def console(self) -> Console:
         return self._console
     
     @property
-    def node(self) -> Node:
+    def node(self) -> Node.Node:
         return self._node
 
     @console.setter
@@ -43,22 +50,22 @@ class State(ABC):
         self._console = console
         
     @node.setter
-    def node(self, node: Node) -> None:
+    def node(self, node: Node.Node) -> None:
         self._node = node
 
     @abstractmethod
-    def handle_action(self) -> None:
+    async def handle_input(self) -> None:
         pass
     
     
 class Home(State):
     
-    def handle_input(self):
+    async def handle_input(self):
         cls()
         
         print("Twitter Clone")
         
-        print(str(self.node.get_timeline()))
+        print( str(await self.node.get_timeline()))
         
         print("Actions:")
         print("1. Post a tweet")
@@ -69,6 +76,8 @@ class Home(State):
         print("6. Exit")
         print("Please enter a number: ", end="")
         
+        action = 0
+        
         while(True):
             try:
                 action = int(input())
@@ -78,9 +87,10 @@ class Home(State):
             except ValueError:
                 print("Invalid input. Please enter a number: ", end="")
                 
-        self.handle_action(action)
+        self.handle_action(self, action)
         
     def handle_action(self, action):
+        action = str(action)
         if action == "1":
             self.console.setState(PostTweet)
         elif action == "2":
@@ -100,7 +110,7 @@ class Home(State):
     
 class PostTweet(State):
     
-    def handle_input(self):
+    async def handle_input(self):
         cls()
         
         print("Post a tweet")
@@ -117,15 +127,15 @@ class PostTweet(State):
             except ValueError:
                 print("Invalid input. Please enter a tweet: ", end="")
         
-        self.handle_action(tweet)
+        await self.handle_action(self, tweet)
         
-    def handle_action(self, tweet):
+    async def handle_action(self, tweet):
         if(tweet == "exit"):
             print("Exiting...")
             self.console.setState(Home)
         else:
             print("Tweet posted!")
-            self.node.tweet(tweet)
+            await self.node.tweet(tweet)
             
         sleep(2)
         self.console.setState(Home)
@@ -133,62 +143,66 @@ class PostTweet(State):
         
 class ViewMyTweets(State):
     
-    def handle_input(self):
+    async def handle_input(self):
         cls()
         
         print("My tweets")
-        print(str(self.node.get_my_tweets()))
+        print(str(await self.node.get_user_tweets()))
         print("Press enter to return to the home screen.")
         input()
         self.console.setState(Home)
 
 class ViewFollowing(State):
     
-    def handle_input(self):
+    async def handle_input(self):
         cls()
         
         print("Users I am following")
-        print(str(self.node.get_following()))
+        print(str(await self.node.get_following()))
         print("Press enter to return to the home screen.")
         input()
         self.console.setState(Home)
         
 class FollowUser(State):
     
-    def handle_input(self):
+    async def handle_input(self):
         cls()
         
         print("Follow a user")
         print("Please be aware that usernames are limited to 20 characters.")
         print("If you want to return to the home screen, enter 'exit'.")
-        print("Enter the username of the user you want to follow: ", end="")
+        print("Enter the username of the user you want to follow: \n", end="")
         
         while(True):
             try:
                 username = input()
                 if len(username) > 20:
                     raise ValueError
-                if(self.node.get_user(username) == None):
+                if(await self.node.get_user(username) == None):
                     raise ValueError
                 break
             except ValueError:
                 print("Invalid input. Please enter a username: ", end="")
         
-        self.handle_action(username)
+        await self.handle_action(self, username)
         
-    def handle_action(self, username):
+    async def handle_action(self, username):
         if(username == "exit"):
             print("Exiting...")
         else:
-            self.node.follow(username)
-            print("User" + username + "followed!")
+            result = await self.node.follow(username)
+            if result is True:
+                print("User " + username + " followed!")
+            else :
+                print("You are already following this user!")
+            
             
         sleep(2)
         self.console.setState(Home)
         
 class UnfollowUser(State):
     
-    def handle_input(self):
+    async def handle_input(self):
         cls()
         
         print("Unfollow a user")
@@ -201,41 +215,39 @@ class UnfollowUser(State):
                 username = input()
                 if len(username) > 20:
                     raise ValueError
-                if(self.node.get_user(username) == None):
+                if(await self.node.get_user(username) == None):
                     raise ValueError
                 break
             except ValueError:
                 print("Invalid input. Please enter a username: ", end="")
         
-        self.handle_action(username)
+        self.handle_action(self, username)
         
-    def handle_action(self, username):
+    async def handle_action(self, username):
         if(username == "exit"):
             print("Exiting...")
         else:
-            self.node.unfollow(username)
-            print("User" + username + "unfollowed!")
+            result = await self.node.unfollow(username)
+            if(result is True):
+                print("User" + username + "unfollowed!")
+            else:
+                print("You are not following this user!")
             
         sleep(2)
         self.console.setState(Home)
         
 class Exit(State):
     
-    def handle_input(self):
+    async def handle_input(self):
         cls()
         
         print("Exiting...")
         exit()
         
-        
-if __init__ == "__main__":
-    console = Console()
-        
 
         
+    # The common state interface for all the states
 
-            
-        
         
 
         
