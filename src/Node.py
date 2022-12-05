@@ -52,16 +52,16 @@ class Node:
 
         if (self.username == "node2"):
             user1 = await self.get("node1")
-            user1 = User.from_json(user1)
-            tweet = await self.get(user1.tweets[0])
-            tweet = Tweet.from_json(tweet)
-            print("tweet: ", tweet.text)
+            #user1 = User.from_json(user1)
+            print("test2 ", user1)
         #END TEST MATERIAL
 
 
 
 
         while True:
-            await asyncio.sleep(1)
+            await asyncio.sleep(5)
+            user1 = await self.get("node1")
+            print(user1)
 
 
