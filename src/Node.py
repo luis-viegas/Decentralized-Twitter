@@ -1,18 +1,26 @@
 import asyncio
 from kademlia.network import Server
-from config import NODE_PORT
+from config import NODE_PORT, ORIGIN_IP, ORIGIN_PORT
 
 from Tweet import Tweet
 from User import User
 
-def start(id):
-    asyncio.run(run(id))
+class Node:
+    def __init__(self, node_id: int, username: str = None):
+        self.server = Server()
+        self.node_id = node_id
+        self.username = username
+        self.user = None
 
-async def run(id):
-    # Create a node and start listening on port 5678
-    node = Server()
-    await node.listen(NODE_PORT + id)
-    await node.bootstrap([("0.0.0.0", 8468)])
+
+async def init_server(self):
+    await self.server.listen(NODE_PORT + self.node_id)
+    await self.server.bootstrap([(ORIGIN_IP, ORIGIN_PORT)])
+
+async def run(self,id):
+
+    await self.init_server()
+
     
     user = User(id, "0.0.0.0", NODE_PORT + id, "user" + str(id), [], [])
     tweet = Tweet(id, "tweet" + str(id), 0)
