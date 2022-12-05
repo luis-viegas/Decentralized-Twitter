@@ -2,7 +2,7 @@ import json
 
 
 class User:
-    def __init__(self, username: str,ip: str , port: int, tweets: list, following: list):
+    def __init__(self, username: str,ip: str , port: int, tweets: list = [], following: list = []):
         self.ip = ip
         self.port = port
         self.username = username

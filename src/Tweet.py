@@ -2,14 +2,16 @@ import json
 import time
 
 class Tweet:
-    def __init__(self, username, text, time):
+    def __init__(self, username, text, time, tweet_id = None):
         self.username = username
         self.text = text
         # Time is taken in seconds to allow a sort of the list of tweets
         self.time = time
         
         #hash the tweet user_id + text + time
-        self.tweet_id = hash(str(username) + text + str(time))
+        self.tweet_id = tweet_id if tweet_id is not None else hash(str(username) + text + str(time))
+
+
         
     def __eq__(self, __o: object) -> bool:
         return self.tweet_id == __o.tweet_id
@@ -38,6 +40,6 @@ class Tweet:
         if not json_str:
             return None
         json_obj = json.loads(json_str)
-        return Tweet(json_obj['tweet_id'], json_obj['username'], json_obj['text'], json_obj['time'])
+        return Tweet(json_obj['username'], json_obj['text'], json_obj['time'], json_obj['tweet_id'])
     
         
