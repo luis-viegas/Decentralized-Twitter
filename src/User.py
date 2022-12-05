@@ -42,6 +42,9 @@ class User:
         
         self.following.remove(username)
         return True
+
+    def add_tweet(self, tweet_id: int):
+        self.tweets.append(tweet_id)
     
     
     

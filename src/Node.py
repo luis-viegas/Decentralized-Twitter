@@ -25,26 +25,37 @@ class Node:
     async def get(self, key):
         return await self.server.get(key)
 
+    async def tweet(self, text: str):
+        tweet = Tweet(self.username, text, 0)
+        self.user.add_tweet(tweet.tweet_id)
+        await self.set(tweet.tweet_id, tweet.to_json())
+        await self.set(self.username, self.user.to_json())
+
+
     async def run(self):
 
         await self.init_server()
 
-
+        # TODO : get user from authentication
         user = User(self.username, self.node_ip, self.node_port)
+        self.user = user
+
+
         await self.set(self.username, user.to_json())
 
 
         #TEST MATERIAL
         if(self.username == "node1"):
-            tweet = Tweet(self.username, "this is our first tweet", 0)
-            await self.set("tweet.tweet_id", tweet.to_json())
+           await self.tweet("Hello World!")
 
         await asyncio.sleep(5)
 
         if (self.username == "node2"):
-            result = await self.get("tweet.tweet_id")
-            tweet2 = Tweet.from_json(result)
-            print("tweet: ", tweet2.text)
+            user1 = await self.get("node1")
+            user1 = User.from_json(user1)
+            tweet = await self.get(user1.tweets[0])
+            tweet = Tweet.from_json(tweet)
+            print("tweet: ", tweet.text)
         #END TEST MATERIAL
 
 
