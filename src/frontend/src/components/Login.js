@@ -15,7 +15,7 @@ function Login(props) {
 
   return (
     <section>
-      <h1 className="text-7xl uppercase text-blue-400 py-16">
+      <h1 className="text-7xl uppercase text-center text-blue-400 py-16">
         Decentralized timeline
       </h1>
       <div className="container px-6 py-12 h-full">
