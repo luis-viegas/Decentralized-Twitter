@@ -1,3 +1,6 @@
+import asyncio
+import threading
+
 from flask import Flask, request, Response
 from flask_cors import CORS
 from Node import Node
@@ -9,20 +12,21 @@ node = None
 
 def set_node(node_received):
     global node
-    node = node
+    node = node_received
+
 
 @app.route("/login", methods=["POST"])
 async def hello_world():
     user = request.json
     global node
-    node = Node(1, user["username"])
-    await node.run()
+    node.username = user["username"]
     print("you are now logged in")
-    return "Hello, World!"
+    return str(node.username)
 
 @app.route("/tweet", methods=["POST"])
 async def tweet():
+    tweet = request.json
     global node
-    await node.tweet("hello from frontend")
+    await node.tweet(tweet["text"])
     print("you posted a tweet")
-    return "Tweet posted"
+    return "Tweet posted successfully"

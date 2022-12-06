@@ -1,12 +1,12 @@
 import asyncio
 from kademlia.network import Server
-from config import NODE_PORT, ORIGIN_IP, ORIGIN_PORT
+from config import NODE_PORT, ORIGIN_IP, ORIGIN_PORT, FLASK_PORT
 
 from Tweet import Tweet
 from User import User
 
 class Node:
-    def __init__(self, node_id: int, username: str = None, node_ip: str = "0.0.0.0"):
+    def __init__(self, node_id: int, username: str = None, node_ip: str = "127.0.0.1"):
         self.server = Server()
         self.node_id = node_id
         self.username = username
@@ -31,37 +31,33 @@ class Node:
         await self.set(tweet.tweet_id, tweet.to_json())
         await self.set(self.username, self.user.to_json())
 
+    async def follow(self, username: str):
+        user = await self.get(username)
+        if user is None:
+            return False
+        self.user.subscribe(username)
+        await self.set(self.username, self.user.to_json())
+        return True
 
     async def run(self):
 
         await self.init_server()
 
         # TODO : get user from authentication
+        while self.username is None:
+            await asyncio.sleep(1)
+            #print("waiting for login")
+
         user = User(self.username, self.node_ip, self.node_port)
         self.user = user
-
-
         await self.set(self.username, user.to_json())
-
-
-        #TEST MATERIAL
-        if(self.username == "node1"):
-           await self.tweet("Hello World!")
-
-        await asyncio.sleep(5)
-
-        if (self.username == "node2"):
-            user1 = await self.get("node1")
-            #user1 = User.from_json(user1)
-            print("test2 ", user1)
-        #END TEST MATERIAL
 
 
 
 
         while True:
-            await asyncio.sleep(5)
-            user1 = await self.get("node1")
-            print(user1)
+            await asyncio.sleep(0.1)
+            #if self.username == "node1":
+                #print(self.user.tweets)
 
 
