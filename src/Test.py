@@ -4,11 +4,28 @@ import asyncio
 import threading
 from multiprocessing import Process
 from time import sleep
-
+from backend import app
+from backend import set_node
+from config import FLASK_PORT
 
 def run_node(node):
     asyncio.run(node.run())
 
+def run_backend(node):
+    set_node(node)
+
+    app.run(host=node.node_ip, port=FLASK_PORT + node.node_id, threaded=True)
+
+def run_proccess(index):
+    node = Node.Node(index)
+
+    node_thread = threading.Thread(target=run_node, args=(node,))
+    backend_thread = threading.Thread(target=run_backend, args=(node,))
+    node_thread.start()
+    backend_thread.start()
+
+    node_thread.join()
+    backend_thread.join()
 
 if __name__ == '__main__':
 
@@ -17,11 +34,15 @@ if __name__ == '__main__':
 
     sleep(1)
 
-    node1 = Node.Node(1, "node1")
     node2 = Node.Node(2, "node2")
+    node3 = Node.Node(3, "node3")
 
-    p1 = Process(target=run_node, args=(node1,))
     p2 = Process(target=run_node, args=(node2,))
+    p3 = Process(target=run_node, args=(node3,))
 
-    p1.start()
     p2.start()
+    p3.start()
+
+    p1 = Process(target=run_proccess, args=(1,))
+    p1.start()
+
