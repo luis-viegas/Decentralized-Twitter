@@ -6,10 +6,11 @@ from Tweet import Tweet
 from User import User
 
 class Node:
-    def __init__(self, node_id: int, username: str = None, node_ip: str = "127.0.0.1"):
+    def __init__(self, node_id: int, username: str = None, private_key: str=None, node_ip: str = "127.0.0.1"):
         self.server = Server()
         self.node_id = node_id
         self.username = username
+        self.private_key = private_key
         self.user = None
         self.node_ip = node_ip
         self.node_port = NODE_PORT + self.node_id
@@ -28,7 +29,7 @@ class Node:
     async def tweet(self, text: str):
         tweet = Tweet(self.username, text, 0)
         self.user.add_tweet(tweet.tweet_id)
-        await self.set(tweet.tweet_id, tweet.to_json())
+        await self.set(tweet.tweet_id, tweet.to_json_signed())
         await self.set(self.username, self.user.to_json())
 
     async def follow(self, username: str):
@@ -51,9 +52,6 @@ class Node:
         user = User(self.username, self.node_ip, self.node_port)
         self.user = user
         await self.set(self.username, user.to_json())
-
-
-
 
         while True:
             await asyncio.sleep(0.1)

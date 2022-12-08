@@ -1,5 +1,5 @@
 import json
-
+import rsa
 
 class User:
     def __init__(self, username: str,ip: str , port: int, tweets: list = [], following: list = []):
@@ -11,22 +11,41 @@ class User:
         
     def __eq__(self, __o: object) -> bool:
         return self.user_id == __o.user_id
+
+    def sign(self, private_key:rsa.PrivateKey):
+        return rsa.sign(
+            json.dumps({
+            'username': self.username,
+            'ip': self.ip,
+            'port': self.port,
+            'tweets': self.tweets,
+            'following': self.following}),
+            private_key,
+            'SHA-1'
+        )
     
-    def to_json(self):
+    def to_json(self,private_key:rsa.PrivateKey):
         return json.dumps({
             'username': self.username,
             'ip': self.ip,
             'port': self.port,
             'tweets': self.tweets,
-            'following': self.following
+            'following': self.following,
+            'signature': self.sign(private_key).decode("utf-8") 
         })
     
     @staticmethod
-    def from_json(json_str):
+    def from_json(json_str, public_key: rsa.PublicKey):
         if not json_str:
             return None
         json_obj = json.loads(json_str)
-        return User(json_obj['username'],json_obj['ip'], json_obj['port'],  json_obj['tweets'], json_obj['following'])
+        user=User(json_obj['username'],json_obj['ip'], json_obj['port'],  json_obj['tweets'], json_obj['following'])
+        signature:str=json_obj['signature']
+
+        # se não for válido dá throw de rsa.pkcs1.VerificationError
+        rsa.verify(user.to_json(),signature.encode("utf-8"),public_key)
+            
+        return user
     
     
     def subscribe(self, username: str):

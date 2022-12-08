@@ -1,7 +1,7 @@
 import asyncio
 import threading
 
-from flask import Flask, request, Response
+from aioflask import Flask, request, Response
 from flask_cors import CORS
 from Node import Node
 
@@ -20,6 +20,7 @@ async def hello_world():
     user = request.json
     global node
     node.username = user["username"]
+    # node.private_key = user["key"]
     print("you are now logged in")
     return str(node.username)
 

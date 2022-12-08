@@ -75,5 +75,4 @@ async def get_public_key():
         mimetype='application/json')
 
 
-
 app.run(host="0.0.0.0", port=8000, threaded=True)
