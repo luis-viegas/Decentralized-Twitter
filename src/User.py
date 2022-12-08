@@ -8,6 +8,7 @@ class User:
         self.username = username
         self.tweets = tweets
         self.following = following
+        self.subscribe(self.username)
         
     def __eq__(self, __o: object) -> bool:
         return self.user_id == __o.user_id

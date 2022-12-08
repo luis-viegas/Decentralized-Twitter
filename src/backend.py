@@ -30,3 +30,9 @@ async def tweet():
     await node.tweet(tweet["text"])
     print("you posted a tweet")
     return "Tweet posted successfully"
+
+@app.route("/timeline", methods=["GET"])
+async def timeline():
+    global node
+    result = await node.get_timeline()
+    return result

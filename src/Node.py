@@ -36,19 +36,26 @@ class Node:
     
     #TODO : define these methods/ current implementation is just for testing
     async def get_timeline(self):
-        return "timeline"
-    
-    async def get_user_tweets(self):
-        return str(Tweet("Maia", "Hello World!", time.time()))
-    
+        users = self.user.following
+        timeline = []
+        for user in users:
+            user = await self.get(user)
+            user = User.from_json(user)
+            for tweet in user.tweets:
+                timeline.append(tweet)
+        result = []
+        for tweet in timeline:
+            tweet_object = await self.get(tweet)
+            tweet_object = Tweet.from_json(tweet_object)
+            result.append(tweet_object.to_json())
+
+        return result
+
     async def get_following(self):
         return str(User("Maia", "0.0.0.0", 0,[], []))
     
     async def get_user(self, username: str):
         return username
-    
-    async def follow(self, username: str):
-        return True
     
     async def unfollow(self, username: str):
         return True
@@ -75,12 +82,17 @@ class Node:
         self.user = user
         await self.set(self.username, user.to_json())
 
-
-
+        if self.username == "node1":
+            await self.tweet("ola mundo!")
+            await self.tweet("second tweet")
+            print("posted 2 tweets")
 
         while True:
             await asyncio.sleep(0.1)
-            #if self.username == "node1":
+            if self.username == "node1":
                 #print(self.user.tweets)
+                result = await self.get_timeline()
+                print(result)
+
 
 
