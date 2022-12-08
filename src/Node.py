@@ -32,7 +32,13 @@ class Node:
         self.user.add_tweet(tweet.tweet_id)
         await self.set(tweet.tweet_id, tweet.to_json())
         await self.set(self.username, self.user.to_json())
-        
+
+    def follow(self):
+        return
+
+    def unfollow(self):
+        return
+
     
     #TODO : define these methods/ current implementation is just for testing
     async def get_timeline(self):
