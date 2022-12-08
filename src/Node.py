@@ -33,11 +33,22 @@ class Node:
         await self.set(tweet.tweet_id, tweet.to_json())
         await self.set(self.username, self.user.to_json())
 
-    def follow(self):
-        return
+    async def follow(self, username: str):
+        user = await self.get(username)
+        if user is None:
+            return False
+        self.user.subscribe(username)
+        print(self.user.following)
+        await self.set(self.username, self.user.to_json())
+        return True
 
-    def unfollow(self):
-        return
+    async def unfollow(self, username: str):
+        user = await self.get(username)
+        if user is None:
+            return False
+        self.user.unsubscribe(username)
+        await self.set(self.username, self.user.to_json())
+        return True
 
     
     #TODO : define these methods/ current implementation is just for testing
@@ -62,18 +73,7 @@ class Node:
     
     async def get_user(self, username: str):
         return username
-    
-    async def unfollow(self, username: str):
-        return True
-    
 
-    async def follow(self, username: str):
-        user = await self.get(username)
-        if user is None:
-            return False
-        self.user.subscribe(username)
-        await self.set(self.username, self.user.to_json())
-        return True
 
     async def run(self):
 
@@ -88,7 +88,7 @@ class Node:
         self.user = user
         await self.set(self.username, user.to_json())
 
-        if self.username == "node1":
+        if self.username == "node2":
             await self.tweet("ola mundo!")
             await self.tweet("second tweet")
             print("posted 2 tweets")
@@ -99,6 +99,7 @@ class Node:
                 #print(self.user.tweets)
                 result = await self.get_timeline()
                 print(result)
+                print(self.user.following)
 
 
 

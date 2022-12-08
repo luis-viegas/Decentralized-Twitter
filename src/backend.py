@@ -41,14 +41,16 @@ async def timeline():
 async def follow():
     username = request.json
     global node
-    node.follow(username["username"])
+    if not (await node.follow(username["username"])):
+        return "User not found"
     print("you followed someone")
-    return "Successfully followed" + username["username"]
+    return "Successfully followed " + username["username"]
 
 @app.route("/unfollow", methods=["POST"])
 async def unfollow():
     username = request.json
     global node
-    node.unfollow(username["username"])
+    if not (await node.unfollow(username["username"])):
+        return "User not found"
     print("you unfollowed someone")
-    return "Successfully unfollowed" + username["username"]
+    return "Successfully unfollowed " + username["username"]
