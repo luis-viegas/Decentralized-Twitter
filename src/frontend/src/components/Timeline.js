@@ -44,6 +44,9 @@ function Timeline() {
           />
         ))}
       </ol>
+      {tweets.length === 0 && (
+        <h1 className="ml-4 text-xl">No tweets to show you...</h1>
+      )}
     </div>
   );
 }
