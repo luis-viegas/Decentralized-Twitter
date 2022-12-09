@@ -1,7 +1,8 @@
 import asyncio
 import threading
+import rsa
 
-from aioflask import Flask, request, Response
+from flask import Flask, request, Response
 from flask_cors import CORS
 from Node import Node
 
@@ -16,11 +17,11 @@ def set_node(node_received):
 
 
 @app.route("/login", methods=["POST"])
-async def hello_world():
+async def login():
     user = request.json
     global node
     node.username = user["username"]
-    # node.private_key = user["key"]
+    node.private_key = rsa.PrivateKey.load_pkcs1(user["private_key"])
     print("you are now logged in")
     return str(node.username)
 

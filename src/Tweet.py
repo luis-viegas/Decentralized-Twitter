@@ -52,15 +52,15 @@ class Tweet:
                 
         
     @staticmethod
-    def from_json(json_str, public_key: rsa.PublicKey):
+    def from_json(json_str):
         if not json_str:
             return None
         json_obj = json.loads(json_str)
         tweet = Tweet(json_obj['username'], json_obj['text'], json_obj['time'], json_obj['tweet_id'])
-        signature:str=json_obj['signature']
+        # signature:str=json_obj['signature']
 
         # se não for válido dá throw de rsa.pkcs1.VerificationError
-        rsa.verify(tweet.to_json(),signature.encode("utf-8"),public_key)
+        # rsa.verify(tweet.to_json(),signature.encode("utf-8"),public_key)
             
         return tweet
     

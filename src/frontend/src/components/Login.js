@@ -13,17 +13,32 @@ function Login(props) {
   }
 
   function doLogin(usernameInput,passwordInput) {
+    console.log(usernameInput);
     axios
-      .post("http://localhost:5001/login", { username: usernameInput, password:passwordInput })
-      .then((response) => {
-        props.setUsername(response.data);
+      .post("http://localhost:8000/login", { username: usernameInput, password:passwordInput })
+      .then((response1) => {
+        if(response1.status!==200){
+          alert("Fail to login!");
+        }else{
+          const private_key=response1.data.response;
+          axios
+          .post("http://localhost:5001/login", { username: usernameInput, private_key: private_key})
+          .then((response) => {
+              props.setUsername(response.data);
+             
+          });
+        }
       });
   }
   function doRegister(usernameInput,passwordInput) {
     axios
-      .post("http://localhost:5001/create", { username: usernameInput, password:passwordInput })
+      .post("http://localhost:8000/create", { username: usernameInput, password:passwordInput })
       .then((response) => {
-        props.setUsername(response.data);
+        if(response.status!==200){
+          alert("Fail to login!");
+        }else{
+          props.setUsername(response.data);
+        }
       });
   }
 

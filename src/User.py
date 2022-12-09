@@ -29,28 +29,42 @@ class User:
         return self.username
     
 
-    def to_json(self,private_key:rsa.PrivateKey):
+    # def to_json(self,private_key:rsa.PrivateKey):
+    #     return json.dumps({
+    #         'username': self.username,
+    #         'ip': self.ip,
+    #         'port': self.port,
+    #         'tweets': self.tweets,
+    #         'following': self.following,
+    #         'signature': self.sign(private_key).decode("utf-8") 
+    #     })
+    def to_json(self):
         return json.dumps({
             'username': self.username,
             'ip': self.ip,
             'port': self.port,
             'tweets': self.tweets,
-            'following': self.following,
-            'signature': self.sign(private_key).decode("utf-8") 
-        })
-    
+            'following': self.following
+    })
     @staticmethod
-    def from_json(json_str, public_key: rsa.PublicKey):
+    def from_json(json_str):
         if not json_str:
             return None
         json_obj = json.loads(json_str)
-        user=User(json_obj['username'],json_obj['ip'], json_obj['port'],  json_obj['tweets'], json_obj['following'])
-        signature:str=json_obj['signature']
+        return User(json_obj['username'],json_obj['ip'], json_obj['port'],  json_obj['tweets'], json_obj['following'])
+    
+    # @staticmethod
+    # def from_json(json_str, public_key: rsa.PublicKey):
+    #     if not json_str:
+    #         return None
+    #     json_obj = json.loads(json_str)
+    #     user=User(json_obj['username'],json_obj['ip'], json_obj['port'],  json_obj['tweets'], json_obj['following'])
+    #     signature:str=json_obj['signature']
 
-        # se não for válido dá throw de rsa.pkcs1.VerificationError
-        rsa.verify(user.to_json(),signature.encode("utf-8"),public_key)
+    #     # se não for válido dá throw de rsa.pkcs1.VerificationError
+    #     rsa.verify(user.to_json(),signature.encode("utf-8"),public_key)
             
-        return user
+    #     return user
     
     
     def subscribe(self, username: str):

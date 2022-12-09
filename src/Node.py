@@ -29,9 +29,9 @@ class Node:
         return await self.server.get(key)
 
     async def tweet(self, text: str):
-        tweet = Tweet(self.username, text, time.time())
+        tweet = Tweet(self.username, text, 0)
         self.user.add_tweet(tweet.tweet_id)
-        await self.set(tweet.tweet_id, tweet.to_json_signed())
+        await self.set(tweet.tweet_id, tweet.to_json())
         await self.set(self.username, self.user.to_json())
         
     

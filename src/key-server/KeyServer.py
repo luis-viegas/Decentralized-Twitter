@@ -12,11 +12,12 @@ key_servers=[]
 
 @app.route("/login", methods=["POST"])
 async def login():
-    username = request.args.get('username')
-    password = request.args.get('password')
+    username = request.json['username']
+    password = request.json['password']
 
     ks_user:KSUser = users.get(username)
-    if(ks_user==None):
+
+    if(ks_user==None or ks_user.password!=password):
         return app.response_class(
         response=json.dumps({'response':'Wrong username or password!'}),
         status=403,
@@ -28,8 +29,8 @@ async def login():
 
 @app.route("/create", methods=["POST"])
 async def sign_up():
-    username = request.args.get('username')
-    password = request.args.get('password')
+    username = request.json['username']
+    password = request.json['password']
     if(users.get(username)==None):
         for server in key_servers:
             params={'username':username}
