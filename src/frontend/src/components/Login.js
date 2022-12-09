@@ -37,7 +37,7 @@ function Login(props) {
         if(response.status!==200){
           alert("Fail to login!");
         }else{
-          props.setUsername(response.data);
+          changeAuthMode()
         }
       });
   }
