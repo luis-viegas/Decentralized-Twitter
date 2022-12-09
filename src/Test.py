@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     p2.start()
     p3.start()
-
+    
     p1 = Process(target=run_proccess, args=(1,))
     p1.start()
 

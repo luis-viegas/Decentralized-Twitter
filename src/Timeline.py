@@ -70,6 +70,13 @@ class Timeline:
                 break
         
         return self.is_valid
+    
+    def update(self):
+        for tweet in self.tweets:
+            if tweet.username != self.user.username and tweet.username not in self.user.following:
+                self.tweets.remove(tweet)
+        
+
             
     
     
