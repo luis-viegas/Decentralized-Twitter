@@ -67,7 +67,7 @@ class Node:
      
     async def update_timeline(self):
         self.timeline.update()
-        print(self.user.following)
+        
         for user in self.user.following:
             user = await self.get(user)
             user = User.from_json(user)
@@ -108,11 +108,32 @@ class Node:
         '''
 
     async def get_following(self):
-        return str(User("Maia", "0.0.0.0", 0,[], []))
+        return self.user.following
     
     async def get_user(self, username: str):
         return username
 
+
+
+
+    # Used for testing and hard coded scenarios
+    async def hard_coded_tweet(self, text: str):
+        tweet = Tweet(self.username, text, time.time())
+        self.user.add_tweet(tweet.tweet_id)
+        self.timeline.add_tweet(tweet)
+        await self.set(self.username, self.user.to_json())
+        await self.set(tweet.tweet_id, tweet.to_json())
+        
+        
+    async def hard_coded_follow(self, username: str):
+        user = await self.get(username)
+        if user is None:
+            return False
+        self.user.subscribe(username)
+        await self.set(self.username, self.user.to_json())
+        return True
+        
+        
         
 
 
@@ -137,15 +158,25 @@ class Node:
             for tweet in self.user.tweets:
                 tweet = await self.get(tweet)
                 self.timeline.add_tweet(Tweet.from_json(tweet))
-
-        self.pool.apply_async(self.update_timeline_thread, (3,))
                 
+        if self.node_id == 1:
+            self.pool.apply_async(self.update_timeline_thread, (3,))
+        
+        if self.node_id == 2:
+            await self.hard_coded_tweet("Hello World")
+            await self.hard_coded_tweet("Hello World 2")
+        
+        if self.node_id == 3:
+            await self.hard_coded_follow("node3")
+            await self.hard_coded_tweet("Hello World 3")
+            
             
         while True:
             await asyncio.sleep(3)
                 
                 
                 
+
 
                 
                 

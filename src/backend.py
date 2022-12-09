@@ -20,7 +20,7 @@ async def hello_world():
     user = request.json
     global node
     node.username = user["username"]
-    print("you are now logged in")
+    print("you are now logged in as " + node.username)
     return str(node.username)
 
 @app.route("/tweet", methods=["POST"])
@@ -28,7 +28,7 @@ async def tweet():
     tweet = request.json
     global node
     await node.tweet(tweet["text"])
-    print("you posted a tweet")
+    print("you posted a tweet : " + node.username)
     return "Tweet posted successfully"
 
 @app.route("/timeline", methods=["GET"])
