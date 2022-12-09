@@ -8,7 +8,7 @@ class User:
         self.username = username
         self.tweets = tweets
         self.following = following
-        self.subscribe(self.username)
+        #self.subscribe(self.username)
         
     def __eq__(self, __o: object) -> bool:
         return self.user_id == __o.user_id
@@ -34,14 +34,14 @@ class User:
     
     
     def subscribe(self, username: str):
-        if username in self.following:
+        if username in self.following or username == self.username:
             return False
         
         self.following.append(username)
         return True
     
     def unsubscribe(self, username: str):
-        if username not in self.following:
+        if username not in self.following or username == self.username:
             return False
         
         self.following.remove(username)

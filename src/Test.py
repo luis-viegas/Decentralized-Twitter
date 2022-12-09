@@ -34,15 +34,11 @@ if __name__ == '__main__':
 
     sleep(1)
 
-    node2 = Node.Node(2, "node2")
-    node3 = Node.Node(3, "node3")
-
-    p2 = Process(target=run_node, args=(node2,))
-    p3 = Process(target=run_node, args=(node3,))
-
-    p2.start()
-    p3.start()
 
     p1 = Process(target=run_proccess, args=(1,))
+    p2 = Process(target=run_proccess, args=(2,))
+    p3 = Process(target=run_proccess, args=(3,))
     p1.start()
+    p2.start()
+    p3.start()
 
