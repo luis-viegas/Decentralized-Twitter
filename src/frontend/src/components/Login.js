@@ -12,13 +12,21 @@ function Login(props) {
     setAuthMode(authMode === "signin" ? "signup" : "signin")
   }
 
-  function doLogin(usernameInput) {
+  function doLogin(usernameInput,passwordInput) {
     axios
-      .post("http://localhost:5001/login", { username: usernameInput })
+      .post("http://localhost:5001/login", { username: usernameInput, password:passwordInput })
       .then((response) => {
         props.setUsername(response.data);
       });
   }
+  function doRegister(usernameInput,passwordInput) {
+    axios
+      .post("http://localhost:5001/create", { username: usernameInput, password:passwordInput })
+      .then((response) => {
+        props.setUsername(response.data);
+      });
+  }
+
   return (
     <section>
       <h1 className="text-7xl uppercase text-center text-blue-400 py-16">
@@ -41,7 +49,7 @@ function Login(props) {
               </div>
               <div className="mb-6">
                 <input
-                  type="text"
+                  type="password"
                   className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-400 focus:outline-none"
                   placeholder="Password"
                   onChange={(e) => setPasswordInput(e.target.value)}
@@ -55,7 +63,7 @@ function Login(props) {
                   className="inline-block px-7 py-3 bg-blue-400 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
                   data-mdb-ripple="true"
                   data-mdb-ripple-color="light"
-                  onClick={() => doLogin(usernameInput)}
+                  onClick={() => doLogin(usernameInput,passwordInput)}
                   >
                     Sign in
                   </button>
@@ -72,7 +80,7 @@ function Login(props) {
                   className="inline-block px-7 py-3 bg-blue-400 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
                   data-mdb-ripple="true"
                   data-mdb-ripple-color="light"
-                  onClick={() => doLogin(usernameInput)}
+                  onClick={() => doRegister(usernameInput,passwordInput)}
                   >
                     Sign up
                   </button>
