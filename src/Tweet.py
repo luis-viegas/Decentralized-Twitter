@@ -8,7 +8,7 @@ class Tweet:
         self.text = text
         # Time is taken in seconds to allow a sort of the list of tweets
         self.time = time
-        
+        self.verified = True
         #hash the tweet user_id + text + time
         self.tweet_id = tweet_id if tweet_id is not None else hash(str(username) + text + str(time))
 
@@ -52,15 +52,19 @@ class Tweet:
                 
         
     @staticmethod
-    def from_json(json_str):
+    def from_json(self,json_str, public_key: rsa.PublicKey):
         if not json_str:
             return None
         json_obj = json.loads(json_str)
         tweet = Tweet(json_obj['username'], json_obj['text'], json_obj['time'], json_obj['tweet_id'])
-        # signature:str=json_obj['signature']
+        signature:str=json_obj['signature']
 
         # se não for válido dá throw de rsa.pkcs1.VerificationError
-        # rsa.verify(tweet.to_json(),signature.encode("utf-8"),public_key)
+        try:
+            rsa.verify(tweet.to_json(),signature.encode("utf-8"),public_key)
+        except rsa.VerificationError:
+            self.verified=False
+
             
         return tweet
     

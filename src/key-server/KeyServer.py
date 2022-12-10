@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from aioflask import Flask, request, Response
 from flask_cors import CORS
 import json
 from KSUser import KSUser
@@ -54,8 +54,8 @@ async def sign_up():
 
 @app.route("/get-public-key", methods=["POST"])
 async def get_public_key():
-    username = request.args.get('username')
-
+    username = request.json['username']
+    print(username)
     ks_user:KSUser = users.get(username)
     if(ks_user==None):
         for server in key_servers:

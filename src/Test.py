@@ -7,6 +7,7 @@ from time import sleep
 from backend import app
 from backend import set_node
 from config import FLASK_PORT
+import requests
 
 def run_node(node):
     asyncio.run(node.run())
@@ -36,6 +37,13 @@ if __name__ == '__main__':
 
     node2 = Node.Node(2, "node2")
     node3 = Node.Node(3, "node3")
+
+
+    response = requests.post('http://localhost:8000/create',json={"username":"node2","password":123})
+    print(response)
+    response = requests.post('http://localhost:8000/create',json={"username":"node3","password":123})
+    print(response)
+
 
     p2 = Process(target=run_node, args=(node2,))
     p3 = Process(target=run_node, args=(node3,))

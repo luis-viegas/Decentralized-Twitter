@@ -4,13 +4,14 @@ from config import NODE_PORT, ORIGIN_IP, ORIGIN_PORT, FLASK_PORT
 from multiprocessing.pool import ThreadPool
 
 import time
+import rsa
 
 from Tweet import Tweet
 from User import User
 from Timeline import Timeline
 
 class Node:
-    def __init__(self, node_id: int, username: str = None, private_key: str=None, node_ip: str = "127.0.0.1"):
+    def __init__(self, node_id: int, username: str = None, private_key: rsa.PrivateKey=None, node_ip: str = "127.0.0.1"):
         self.server = Server()
         self.node_id = node_id
         self.username = username
@@ -40,17 +41,18 @@ class Node:
         self.pool.apply_async(self.update_tweet_DHT, (tweet,))
         
     def update_user_DHT(self):
-        asyncio.run(self.set(self.username, self.user.to_json()))
+        asyncio.run(self.set(self.username, self.user.to_json_signed(self.private_key)))
         
     def update_tweet_DHT(self, tweet: Tweet):
-        asyncio.run(self.set(tweet.tweet_id, tweet.to_json_signed()))
+        asyncio.run(self.set(tweet.tweet_id, tweet.to_json_signed(self.private_key)))
         
         
     async def follow(self, username: str):
         user = await self.get(username)
         if user is None:
             return False
-        self.user.subscribe(username)
+        if(self.user.subscribe(username)==False):
+            return False
         self.pool.apply_async(self.update_user_DHT)
         return True
 
@@ -74,13 +76,13 @@ class Node:
         for user in self.user.following:
             user = await self.get(user)
             user = User.from_json(user)
-            print(user.tweets)
+            user_pk = self.user.following_pk[user.username]
             for tweet in user.tweets:
                 #Check if any tweet in timeline has the same id as the tweet in user.tweets
                 if tweet in [tweet.tweet_id for tweet in self.timeline.tweets]:
                     continue
                 tweet = await self.get(tweet)
-                tweet = Tweet.from_json(tweet)
+                tweet = Tweet.from_json(tweet,user_pk)
                 self.timeline.add_tweet(tweet)
                 
         
