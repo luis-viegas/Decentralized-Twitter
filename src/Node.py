@@ -41,6 +41,7 @@ class Node:
         self.pool.apply_async(self.update_tweet_DHT, (tweet,))
         
     def update_user_DHT(self):
+        print("update_user_DHT")
         asyncio.run(self.set(self.username, self.user.to_json_signed(self.private_key)))
         
     def update_tweet_DHT(self, tweet: Tweet):
@@ -71,18 +72,29 @@ class Node:
         return [ tweet.to_json() for tweet in self.timeline.tweets ]
      
     async def update_timeline(self):
+        print("maia")
         self.timeline.update()
+        print("maia2")
         
         for user in self.user.following:
+            print(user)
+            user_pk = self.user.following_pk[user]
+            print(user_pk)
             user = await self.get(user)
-            user = User.from_json(user)
-            user_pk = self.user.following_pk[user.username]
+            if(user is None):
+                continue
+            print("maia3")
+            print(user)
+            user = User.from_json(user, user_pk)
+            print("maia4")
             for tweet in user.tweets:
                 #Check if any tweet in timeline has the same id as the tweet in user.tweets
                 if tweet in [tweet.tweet_id for tweet in self.timeline.tweets]:
                     continue
+                print("maia8")
                 tweet = await self.get(tweet)
                 tweet = Tweet.from_json(tweet,user_pk)
+                print("maia9")
                 self.timeline.add_tweet(tweet)
                 
         
@@ -90,6 +102,8 @@ class Node:
     # Updates user timeline every n seconds (Used by ThreadPool)
     def update_timeline_thread(self, n):
         while True:
+            print(self.username + " timeline updater started")
+            print(self.user.following)
             time.sleep(n)
             asyncio.run(self.update_timeline())
             
@@ -126,8 +140,8 @@ class Node:
         tweet = Tweet(self.username, text, time.time())
         self.user.add_tweet(tweet.tweet_id)
         self.timeline.add_tweet(tweet)
-        await self.set(self.username, self.user.to_json())
-        await self.set(tweet.tweet_id, tweet.to_json())
+        await self.set(self.username, self.user.to_json_signed(self.private_key))
+        await self.set(tweet.tweet_id, tweet.to_json_signed(self.private_key))
         
         
     async def hard_coded_follow(self, username: str):
@@ -135,7 +149,7 @@ class Node:
         if user is None:
             return False
         self.user.subscribe(username)
-        await self.set(self.username, self.user.to_json())
+        await self.set(self.username, self.user.to_json_signed(self.private_key))
         return True
         
         
@@ -174,7 +188,8 @@ class Node:
             await self.hard_coded_tweet("Hello World 2")
         
         if self.node_id == 3:
-            await self.hard_coded_follow("node3")
+            time.sleep(3)
+            #await self.hard_coded_follow("node3")
             await self.hard_coded_tweet("Hello World 3")
             
             

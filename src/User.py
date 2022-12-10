@@ -18,7 +18,7 @@ class User:
 
     def sign(self, private_key:rsa.PrivateKey):
         return rsa.sign(
-            self.to_json(),
+            self.to_json().encode(),
             private_key,
             'SHA-1'
         )
@@ -34,7 +34,7 @@ class User:
             'port': self.port,
             'tweets': self.tweets,
             'following': self.following,
-            'signature': self.sign(private_key).decode("utf-8") 
+            'signature': self.sign(private_key).hex()
         })
 
     def to_json(self):
@@ -54,18 +54,23 @@ class User:
     #     return User(json_obj['username'],json_obj['ip'], json_obj['port'],  json_obj['tweets'], json_obj['following'])
     
     @staticmethod
-    def from_json(self,json_str, public_key: rsa.PublicKey):
+    def from_json(json_str, public_key: rsa.PublicKey):
+        print("maia5")
         if not json_str:
             return None
         json_obj = json.loads(json_str)
+        print(json_obj)
         user=User(json_obj['username'],json_obj['ip'], json_obj['port'],  json_obj['tweets'], json_obj['following'])
-        signature:str=json_obj['signature']
+        signature=json_obj['signature']
+        print("maia6")
 
         # se não for válido dá throw de rsa.pkcs1.VerificationError
         try:
-            rsa.verify(user.to_json(),signature.encode("utf-8"),public_key)
+            rsa.verify(user.to_json().encode(),bytes.fromhex(signature),public_key)
         except rsa.VerificationError:
-            self.verified=False
+            user.verified=False
+        
+        print("maia7")
 
         return user
     
@@ -74,11 +79,10 @@ class User:
         if username in self.following or username == self.username:
             print("deu falso")
             return False
-        print("ola")
         self.following.append(username)
         response = requests.post('http://localhost:8000/get-public-key',json={"username":username})
         public_key_str = response.json()['response']
-        self.following_pk['username'] = rsa.PublicKey.load_pkcs1(public_key_str)
+        self.following_pk[username] = rsa.PublicKey.load_pkcs1(public_key_str)
         return True
     
     def unsubscribe(self, username: str):

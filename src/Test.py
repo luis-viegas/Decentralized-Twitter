@@ -7,6 +7,7 @@ from time import sleep
 from backend import app
 from backend import set_node
 from config import FLASK_PORT
+import rsa
 import requests
 
 def run_node(node):
@@ -43,7 +44,11 @@ if __name__ == '__main__':
     print(response)
     response = requests.post('http://localhost:8000/create',json={"username":"node3","password":123})
     print(response)
-
+    response = requests.post('http://localhost:8000/login',json={"username":"node2","password":123})
+    node2.private_key=rsa.PrivateKey.load_pkcs1(response.json()["response"])
+    response = requests.post('http://localhost:8000/login',json={"username":"node3","password":123})
+    node3.private_key=rsa.PrivateKey.load_pkcs1(response.json()["response"])
+    print(node3.private_key.save_pkcs1().decode("utf-8"))
 
     p2 = Process(target=run_node, args=(node2,))
     p3 = Process(target=run_node, args=(node3,))
