@@ -54,6 +54,15 @@ function Login(props) {
           </div>
           <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
             <div>
+              <div >
+                <h4 className="text-4xl text-center text-blue-400 py-16">
+                  {
+                    authMode==="signin" 
+                    ? "Sign In"
+                    : "Sign Up"
+                  }
+                </h4>
+              </div>
               <div className="mb-6">
                 <input
                   type="text"
