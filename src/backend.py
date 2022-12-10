@@ -2,7 +2,7 @@ import asyncio
 import threading
 import rsa
 
-from aioflask import Flask, request, Response
+from flask import Flask, request, Response
 from flask_cors import CORS
 from Node import Node
 
