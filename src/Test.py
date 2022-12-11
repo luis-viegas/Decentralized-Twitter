@@ -45,7 +45,7 @@ if __name__ == '__main__':
     response = requests.post('http://localhost:8000/create',json={"username":"node3","password":123})
     print(response)
     response = requests.post('http://localhost:8000/login',json={"username":"node2","password":123})
-    node2.private_key=rsa.PrivateKey.load_pkcs1(response.json()["response"])
+    node2.private_key=rsa.PrivateKey.load_pkcs1(response.json()["private"])
     response = requests.post('http://localhost:8000/login',json={"username":"node3","password":123})
     node3.private_key=rsa.PrivateKey.load_pkcs1(response.json()["response"])
     print(node3.private_key.save_pkcs1().decode("utf-8"))

@@ -23,11 +23,14 @@ function Login(props) {
         if (response1.status !== 200) {
           alert("Fail to login!");
         } else {
-          const private_key = response1.data.response;
+          const private_key = response1.data.private;
+          const public_key = response1.data.public;
+
           axios
             .post(`http://localhost:${props.port}/login`, {
               username: usernameInput,
               private_key: private_key,
+              public_key: public_key
             })
             .then((response) => {
               props.setUsername(response.data);

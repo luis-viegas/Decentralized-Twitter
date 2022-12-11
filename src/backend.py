@@ -20,7 +20,7 @@ def set_node(node_received):
 async def login():
     user = request.json
     global node
-    await node.login(user["username"],rsa.PrivateKey.load_pkcs1(user["private_key"]))
+    await node.login(user["username"],rsa.PrivateKey.load_pkcs1(user["private_key"]),rsa.PublicKey.load_pkcs1(user['public_key']))
     return str(node.username)
 
 @app.route("/tweet", methods=["POST"])

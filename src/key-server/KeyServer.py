@@ -23,7 +23,7 @@ async def login():
         status=403,
         mimetype='application/json')
     return app.response_class(
-        response=json.dumps({'response':ks_user.get_private_key(password).save_pkcs1().decode('utf-8')}),
+        response=json.dumps({'private':ks_user.get_private_key(password).save_pkcs1().decode('utf-8'),'public':ks_user.get_public_key().save_pkcs1().decode('utf-8')}),
         status=200,
         mimetype='application/json')
 
