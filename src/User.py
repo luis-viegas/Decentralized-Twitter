@@ -55,22 +55,19 @@ class User:
     
     @staticmethod
     def from_json(json_str, public_key: rsa.PublicKey):
-        print("maia5")
         if not json_str:
             return None
         json_obj = json.loads(json_str)
-        print(json_obj)
         user=User(json_obj['username'],json_obj['ip'], json_obj['port'],  json_obj['tweets'], json_obj['following'])
         signature=json_obj['signature']
-        print("maia6")
+
 
         # se não for válido dá throw de rsa.pkcs1.VerificationError
         try:
             rsa.verify(user.to_json().encode(),bytes.fromhex(signature),public_key)
         except rsa.VerificationError:
             user.verified=False
-        
-        print("maia7")
+
 
         return user
     
