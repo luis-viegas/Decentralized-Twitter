@@ -1,5 +1,5 @@
 import json
-import time
+import time as tm
 import rsa
 
 class Tweet:
@@ -8,6 +8,7 @@ class Tweet:
         self.text = text
         # Time is taken in seconds to allow a sort of the list of tweets
         self.time = time
+        self.time_secs = tm.mktime(time)
         self.verified = True
         #hash the tweet user_id + text + time
         self.tweet_id = tweet_id if tweet_id is not None else hash(str(username) + text + str(time))
@@ -18,11 +19,11 @@ class Tweet:
         return self.tweet_id == __o.tweet_id
     
     def __gt__(self, other):
-        return self.time > other.time
+        return self.time_secs > other.time_secs
     
     #One line with username and time of tweet and then the text of the tweet on the next line
     def __str__(self):
-        return self.username + ": " + time.ctime(self.time) + "\n" + self.text
+        return self.username + ": " + tm.ctime(self.time) + "\n" + self.text
     
         
     def sign(self, private_key: rsa.PrivateKey):
@@ -37,7 +38,8 @@ class Tweet:
             'tweet_id': self.tweet_id,
             'username': self.username,
             'text': self.text,
-            'time': self.time
+            'time': self.time,
+            'time_secs': self.time_secs
         })
 
 
@@ -47,6 +49,7 @@ class Tweet:
             'username': self.username,
             'text': self.text,
             'time': self.time,
+            'time_secs': self.time_secs,
             'signature': self.sign(private_key).hex() 
         })
                 
@@ -56,7 +59,7 @@ class Tweet:
         if not json_str:
             return None
         json_obj = json.loads(json_str)
-        tweet = Tweet(json_obj['username'], json_obj['text'], json_obj['time'], json_obj['tweet_id'])
+        tweet = Tweet(json_obj['username'], json_obj['text'], tm.localtime(json_obj['time_secs']), json_obj['tweet_id'])
         signature=json_obj['signature']
 
         # se não for válido dá throw de rsa.pkcs1.VerificationError
