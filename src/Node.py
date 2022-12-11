@@ -41,6 +41,7 @@ class Node:
             self.pool.apply_async(self.update_user_DHT)
         else:
             self.user = User.from_json(user_DHT, self.public_key)
+            self.timeline = Timeline(self.user, []) 
             for tweet in self.user.tweets:
                 tweet = await self.get(tweet)
                 self.timeline.add_tweet(Tweet.from_json(tweet, self.public_key))
@@ -94,7 +95,7 @@ class Node:
 
     
     async def get_timeline(self):
-        return [ tweet.to_json() for tweet in self.timeline.tweets ]
+        return [ tweet.to_json() for tweet in self.timeline.tweets if tweet.verified==True]
      
     async def update_timeline(self):
         #If timeline is None, dont do nothing
@@ -103,7 +104,9 @@ class Node:
         
         for user in self.user.following:
             user_pk = self.user.following_pk[user]
+            print("username "+user)
             user = await self.get(user)
+            print("user"+user)
             if(user is None):
                 continue
             user = User.from_json(user, user_pk)
@@ -113,6 +116,7 @@ class Node:
                     continue
                 tweet = await self.get(tweet)
                 tweet = Tweet.from_json(tweet,user_pk)
+                print("tweet"+tweet.to_json())
                 self.timeline.add_tweet(tweet)
             
 
@@ -147,7 +151,7 @@ class Node:
         while self.username is None:
             await asyncio.sleep(1)
             
-        self.pool.apply_async(self.update_timeline_thread, (3,))
+        self.pool.apply_async(self.update_timeline_thread, (1,))
     
             
         while True:

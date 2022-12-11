@@ -35,6 +35,7 @@ async def tweet():
 async def timeline():
     global node
     result = await node.get_timeline()
+    print(node.user.tweets)
     return result
 
 @app.route("/follow", methods=["POST"])

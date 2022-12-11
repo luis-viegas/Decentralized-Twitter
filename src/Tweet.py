@@ -19,7 +19,7 @@ class Tweet:
         return self.tweet_id == __o.tweet_id
     
     def __gt__(self, other):
-        return self.time_secs > other.time_secs
+        return self.time_secs < other.time_secs
     
     #One line with username and time of tweet and then the text of the tweet on the next line
     def __str__(self):
