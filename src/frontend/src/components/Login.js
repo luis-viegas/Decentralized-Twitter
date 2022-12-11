@@ -1,10 +1,11 @@
-import FakeTwitter from "./fake-twitter.jpg";
+import FakeTwitter from "./fake-twitter.png";
 import React, { useState } from "react";
 import axios from "axios";
 
 function Login(props) {
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
+  const [showAnimation, setShowAnimation] = useState(false);
 
   let [authMode, setAuthMode] = useState("signin");
 
@@ -13,7 +14,7 @@ function Login(props) {
   };
 
   function doLogin(usernameInput, passwordInput) {
-    console.log(usernameInput);
+    setShowAnimation(true);
     axios
       .post("http://localhost:8000/login", {
         username: usernameInput,
@@ -30,10 +31,11 @@ function Login(props) {
             .post(`http://localhost:${props.port}/login`, {
               username: usernameInput,
               private_key: private_key,
-              public_key: public_key
+              public_key: public_key,
             })
             .then((response) => {
               props.setUsername(response.data);
+              setShowAnimation(false);
             });
         }
       });
@@ -61,7 +63,11 @@ function Login(props) {
       <div className="container px-6 py-12 h-full">
         <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
           <div className="md:w-8/12 lg:w-6/12 mb-12 md:mb-0">
-            <img src={FakeTwitter} className="w-full" alt="Phone image" />
+            <img
+              src={FakeTwitter}
+              className="w-full filtro"
+              alt="Phone image"
+            />
           </div>
           <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
             <div>
@@ -95,6 +101,14 @@ function Login(props) {
                     onClick={() => doLogin(usernameInput, passwordInput)}
                   >
                     Sign in
+                    {showAnimation && (
+                      <div className="lds-ring">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                      </div>
+                    )}
                   </button>
                   <div className="text-center">
                     Not registered yet?{" "}

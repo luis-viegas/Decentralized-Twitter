@@ -40,10 +40,10 @@ class Node:
         if(user_DHT is None):
             self.pool.apply_async(self.update_user_DHT)
         else:
-            self.user = User.from_json(user, self.public_key)
+            self.user = User.from_json(user_DHT, self.public_key)
             for tweet in self.user.tweets:
                 tweet = await self.get(tweet)
-                self.timeline.add_tweet(Tweet.from_json(tweet))
+                self.timeline.add_tweet(Tweet.from_json(tweet, self.public_key))
                 
     def logout(self):
         self.user = None
@@ -60,7 +60,7 @@ class Node:
         return await self.server.get(key)
 
     async def tweet(self, text: str):
-        tweet = Tweet(self.username, text, 0)
+        tweet = Tweet(self.username, text, time.localtime())
         self.user.add_tweet(tweet.tweet_id)
         self.timeline.add_tweet(tweet)
         self.pool.apply_async(self.update_user_DHT)

@@ -54,3 +54,15 @@ async def unfollow():
         return "User not found"
     print("you unfollowed someone")
     return "Successfully unfollowed " + username["username"]
+
+@app.route("/logout", methods=["GET"])
+async def logout():
+    global node
+    node.logout()
+    return "Logged out successfully"
+
+@app.route("/following", methods=["GET"])
+async def following():
+    global node
+    result = await node.get_following()
+    return result

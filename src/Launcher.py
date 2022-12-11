@@ -5,6 +5,7 @@ import threading
 from Node import Node
 from backend import set_node, app
 from config import FLASK_PORT
+from Origin import run as run_origin
 
 
 def run_node(node):
@@ -36,5 +37,7 @@ if (sys.argv[1] == "node"):
     id = sys.argv[2]
     run_proccess(id)
 
+if(sys.argv[1] == "origin"):
+    run_origin()
 
 

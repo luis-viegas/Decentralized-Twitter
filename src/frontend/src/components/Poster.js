@@ -13,11 +13,12 @@ function Poster(props) {
       });
   }
   return (
-    <div className="block p-12 rounded-lg shadow-lg bg-white flex justify-between w-[50vw]">
+    <div className="p-12 rounded-lg shadow-lg bg-white flex justify-between w-[50vw]">
       <img
         src="https://pyxis.nymag.com/v1/imgs/34c/cae/ce8997338cbad42766ca705559b6e0ad6f-elon-musk-.rsquare.w700.jpg"
         className="rounded-full w-16 h-16"
       />
+
       <div className="flex justify-center items-end ml-6 w-full flex-col">
         <input
           type="text"
