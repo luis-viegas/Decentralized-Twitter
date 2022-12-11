@@ -1,10 +1,10 @@
 import React from "react";
 import axios from "axios";
-function Poster() {
+function Poster(props) {
   const [tweet, setTweet] = React.useState("");
   function doTweet() {
     axios
-      .post("http://localhost:5001/tweet", {
+      .post(`http://localhost:${props.port}/tweet`, {
         text: tweet,
       })
       .then((response) => {

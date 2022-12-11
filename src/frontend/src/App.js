@@ -5,15 +5,16 @@ import Timeline from "./components/Timeline";
 import Follower from "./components/Follower";
 function App() {
   const [username, setUsername] = useState("");
+  const [port, setPort] = useState(5001);
   return (
     <div className="App">
       {username === "" ? (
-        <Login setUsername={setUsername}></Login>
+        <Login setUsername={setUsername} setPort={setPort} port={port}></Login>
       ) : (
         <div className="pt-4 flex items-center flex-col">
-          <Follower></Follower>
-          <Poster></Poster>
-          <Timeline></Timeline>
+          <Follower port={port}></Follower>
+          <Poster port={port}></Poster>
+          <Timeline port={port}></Timeline>
         </div>
       )}
     </div>

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import Tweet from "./Tweet";
 
-function Timeline() {
+function Timeline(props) {
   const [tweets, setTweets] = React.useState([]);
   useEffect(() => {
     //axios.get("http://localhost:5001/timeline").then((response) => {
@@ -12,7 +12,7 @@ function Timeline() {
   }, []);
 
   function refreshTimeline() {
-    axios.get("http://localhost:5001/timeline").then((response) => {
+    axios.get(`http://localhost:${props.port}/timeline`).then((response) => {
       let result = [];
       for (var i = 0; i < response.data.length; i++) {
         result.push(JSON.parse(response.data[i]));

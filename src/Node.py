@@ -143,6 +143,7 @@ class Node:
 
     async def run(self):
 
+
         await self.init_server()
         
         self.pool = ThreadPool()
@@ -167,6 +168,8 @@ class Node:
             
         while True:
             await asyncio.sleep(3)
+            if __name__ == '__main__':
+                print("i am alive")
                 
                 
                 

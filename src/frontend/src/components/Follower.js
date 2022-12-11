@@ -1,10 +1,10 @@
 import React from "react";
 import axios from "axios";
-function Follower() {
+function Follower(props) {
   const [username, setUsername] = React.useState("");
   function doFollow() {
     axios
-      .post("http://localhost:5001/follow", {
+      .post(`http://localhost:${props.port}/follow`, {
         username: username,
       })
       .then((response) => {
@@ -14,7 +14,7 @@ function Follower() {
   }
   function doUnfollow() {
     axios
-      .post("http://localhost:5001/unfollow", {
+      .post(`http://localhost:${props.port}/unfollow`, {
         username: username,
       })
       .then((response) => {

@@ -6,38 +6,46 @@ function Login(props) {
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
 
-  let [authMode, setAuthMode] = useState("signin")
+  let [authMode, setAuthMode] = useState("signin");
 
   const changeAuthMode = () => {
-    setAuthMode(authMode === "signin" ? "signup" : "signin")
-  }
+    setAuthMode(authMode === "signin" ? "signup" : "signin");
+  };
 
-  function doLogin(usernameInput,passwordInput) {
+  function doLogin(usernameInput, passwordInput) {
     console.log(usernameInput);
     axios
-      .post("http://localhost:8000/login", { username: usernameInput, password:passwordInput })
+      .post("http://localhost:8000/login", {
+        username: usernameInput,
+        password: passwordInput,
+      })
       .then((response1) => {
-        if(response1.status!==200){
+        if (response1.status !== 200) {
           alert("Fail to login!");
-        }else{
-          const private_key=response1.data.response;
+        } else {
+          const private_key = response1.data.response;
           axios
-          .post("http://localhost:5001/login", { username: usernameInput, private_key: private_key})
-          .then((response) => {
+            .post(`http://localhost:${props.port}/login`, {
+              username: usernameInput,
+              private_key: private_key,
+            })
+            .then((response) => {
               props.setUsername(response.data);
-             
-          });
+            });
         }
       });
   }
-  function doRegister(usernameInput,passwordInput) {
+  function doRegister(usernameInput, passwordInput) {
     axios
-      .post("http://localhost:8000/create", { username: usernameInput, password:passwordInput })
+      .post("http://localhost:8000/create", {
+        username: usernameInput,
+        password: passwordInput,
+      })
       .then((response) => {
-        if(response.status!==200){
+        if (response.status !== 200) {
           alert("Fail to login!");
-        }else{
-          changeAuthMode()
+        } else {
+          changeAuthMode();
         }
       });
   }
@@ -54,13 +62,9 @@ function Login(props) {
           </div>
           <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
             <div>
-              <div >
+              <div>
                 <h4 className="text-4xl text-center text-blue-400 py-16">
-                  {
-                    authMode==="signin" 
-                    ? "Sign In"
-                    : "Sign Up"
-                  }
+                  {authMode === "signin" ? "Sign In" : "Sign Up"}
                 </h4>
               </div>
               <div className="mb-6">
@@ -79,50 +83,65 @@ function Login(props) {
                   onChange={(e) => setPasswordInput(e.target.value)}
                 />
               </div>
-              {
-                authMode==="signin"
-                ?
+              {authMode === "signin" ? (
                 <>
                   <button
-                  className="inline-block px-7 py-3 bg-blue-400 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
-                  data-mdb-ripple="true"
-                  data-mdb-ripple-color="light"
-                  onClick={() => doLogin(usernameInput,passwordInput)}
+                    className="inline-block px-7 py-3 bg-blue-400 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
+                    data-mdb-ripple="true"
+                    data-mdb-ripple-color="light"
+                    onClick={() => doLogin(usernameInput, passwordInput)}
                   >
                     Sign in
                   </button>
                   <div className="text-center">
                     Not registered yet?{" "}
                     <span className="link-primary" onClick={changeAuthMode}>
-                      <a href="#!" className="underline text-blue-600 hover:text-blue-700">Sign Up</a>
+                      <a
+                        href="#!"
+                        className="underline text-blue-600 hover:text-blue-700"
+                      >
+                        Sign Up
+                      </a>
                     </span>
                   </div>
                 </>
-                :
+              ) : (
                 <>
                   <button
-                  className="inline-block px-7 py-3 bg-blue-400 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
-                  data-mdb-ripple="true"
-                  data-mdb-ripple-color="light"
-                  onClick={() => doRegister(usernameInput,passwordInput)}
+                    className="inline-block px-7 py-3 bg-blue-400 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
+                    data-mdb-ripple="true"
+                    data-mdb-ripple-color="light"
+                    onClick={() => doRegister(usernameInput, passwordInput)}
                   >
                     Sign up
                   </button>
                   <div className="text-center">
-                   Already registered?{" "}
+                    Already registered?{" "}
                     <span className="link-primary" onClick={changeAuthMode}>
-                      <a href="#!" className="underline text-blue-600 hover:text-blue-700">Sign In</a>
+                      <a
+                        href="#!"
+                        className="underline text-blue-600 hover:text-blue-700"
+                      >
+                        Sign In
+                      </a>
                     </span>
                   </div>
                 </>
-              }
+              )}
             </div>
           </div>
         </div>
       </div>
+      <input
+        type="number"
+        placeholder="write your port value here (1 - 100)"
+        onChange={(e) => {
+          props.setPort(5000 + Number(e.target.value));
+        }}
+        className="ml-[25vw] w-1/2 px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-400 focus:outline-none"
+      ></input>
     </section>
   );
-  
 }
 
 export default Login;
